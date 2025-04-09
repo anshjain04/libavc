@@ -240,6 +240,18 @@ WORD32 ih264d_delete_lt_node(dpb_manager_t *ps_dpb_mgr,
                 ps_unmark_node->ps_prev_long = NULL;
                 ps_dpb_mgr->u1_num_lt_ref_bufs--; //decrement LT buf count
             }
+            else if(ps_unmark_node->s_top_field.u1_reference_info == UNUSED_FOR_REF)
+            {   
+                if(ps_unmark_node == ps_dpb_mgr->ps_dpb_ht_head)
+                    ps_dpb_mgr->ps_dpb_ht_head = ps_next_dpb->ps_prev_long;
+
+                ps_unmark_node->u1_lt_idx = MAX_REF_BUFS + 1;
+                ps_unmark_node->s_top_field.u1_long_term_frame_idx =
+                MAX_REF_BUFS + 1;
+                ps_next_dpb->ps_prev_long = ps_unmark_node->ps_prev_long; //update link
+                ps_unmark_node->ps_prev_long = NULL;
+                // ps_dpb_mgr->u1_num_lt_ref_bufs--;
+            }
         }
     }
     return OK;
